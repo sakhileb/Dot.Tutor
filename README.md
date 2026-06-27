@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/dot_tutor.png" alt="Dot.Tutor" width="280" />
+
 <h1>Dot.Tutor</h1>
 
 <p>Tutoring platform — find expert tutors, book sessions, and learn online or in person.</p>
