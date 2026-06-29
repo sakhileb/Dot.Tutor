@@ -2,8 +2,8 @@
 
 <style>
     .kpi-card {
-        background: #131b2e;
-        border: 1px solid rgba(67,70,86,0.25);
+        background:#141416;
+        border: 1px solid rgba(255,255,255,0.07);
         border-radius: 12px;
         padding: 1.5rem 1.75rem;
         display: flex;
@@ -18,30 +18,30 @@
         margin-bottom: 0.5rem;
     }
     .kpi-value {
-        font-family: 'Manrope', sans-serif;
+        font-family:'Syne', sans-serif;
         font-size: 2rem; font-weight: 800;
-        color: #dae2fd; line-height: 1;
+        color:#f4f4f5; line-height: 1;
     }
     .kpi-label {
         font-size: 0.72rem; font-weight: 600;
-        color: #8d90a2; text-transform: uppercase; letter-spacing: 0.1em;
+        color:#71717a; text-transform: uppercase; letter-spacing: 0.1em;
     }
     .kpi-sub { font-size: 0.72rem; color: #6366f1; font-weight: 600; margin-top: 0.2rem; }
 
     .panel {
-        background: #131b2e;
-        border: 1px solid rgba(67,70,86,0.25);
+        background:#141416;
+        border: 1px solid rgba(255,255,255,0.07);
         border-radius: 12px;
         overflow: hidden;
     }
     .panel-header {
         padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid rgba(67,70,86,0.2);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
         display: flex; align-items: center; gap: 0.6rem;
     }
     .panel-title {
-        font-family: 'Manrope', sans-serif;
-        font-size: 0.875rem; font-weight: 700; color: #dae2fd;
+        font-family:'Syne', sans-serif;
+        font-size: 0.875rem; font-weight: 700; color:#f4f4f5;
     }
     .panel-count {
         font-size: 0.7rem; font-weight: 700;
@@ -50,7 +50,7 @@
     }
 
     .subject-chip {
-        background: rgba(19,27,46,0.8);
+        background: rgba(20,20,22,0.8);
         border: 1px solid rgba(67,70,86,0.3);
         border-radius: 10px;
         padding: 0.75rem 1rem;
@@ -62,8 +62,8 @@
         border-color: rgba(99,102,241,0.4);
         background: rgba(99,102,241,0.07);
     }
-    .subject-name { font-family:'Manrope',sans-serif; font-size:0.8rem; font-weight:700; color:#dae2fd; }
-    .subject-tutors { font-size:0.68rem; color:#8d90a2; }
+    .subject-name { font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; color:#f4f4f5; }
+    .subject-tutors { font-size:0.68rem; color:#71717a; }
 
     .session-row {
         display: flex; align-items: center; gap: 1rem;
@@ -93,9 +93,9 @@
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th {
         padding: 0.75rem 1.25rem;
-        font-size: 0.65rem; font-weight: 700; color: #8d90a2;
+        font-size: 0.65rem; font-weight: 700; color:#71717a;
         text-transform: uppercase; letter-spacing: 0.1em;
-        text-align: left; border-bottom: 1px solid rgba(67,70,86,0.2);
+        text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .data-table td {
         padding: 0.85rem 1.25rem;
@@ -106,8 +106,8 @@
     .data-table tr:last-child td { border-bottom: none; }
     .data-table tr:hover td { background: rgba(99,102,241,0.04); }
     .data-table .tutor-cell { display:flex; align-items:center; gap:0.6rem; }
-    .data-table .amount { font-family:'Manrope',sans-serif; font-weight:700; color:#a5b4fc; }
-    .data-table .dim { color: #8d90a2; }
+    .data-table .amount { font-family:'Syne',sans-serif; font-weight:700; color:#a5b4fc; }
+    .data-table .dim { color:#71717a; }
 </style>
 
 <div style="padding: 2rem 2.5rem; max-width: 1400px;">
@@ -115,15 +115,15 @@
     {{-- Page header --}}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
         <div>
-            <h1 style="font-family:'Manrope',sans-serif;font-size:1.5rem;font-weight:800;color:#dae2fd;margin:0 0 0.2rem;">
+            <h1 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#f4f4f5;margin:0 0 0.2rem;">
                 Tutor Dashboard
             </h1>
-            <p style="font-size:0.8rem;color:#8d90a2;margin:0;">
+            <p style="font-size:0.8rem;color:#71717a;margin:0;">
                 {{ now()->format('l, F j, Y') }}
             </p>
         </div>
-        <a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.25rem;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:9999px;font-family:'Manrope',sans-serif;font-size:0.8rem;font-weight:700;color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(99,102,241,0.3);">
-            <span class="material-symbols-outlined" style="font-size:18px;">add_circle</span>
+        <a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.25rem;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:9999px;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(99,102,241,0.3);">
+            <span class="material-symbols-rounded" style="font-size:18px;">add_circle</span>
             Book Session
         </a>
     </div>
@@ -133,7 +133,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(99,102,241,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#818cf8;">event_note</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#818cf8;">event_note</span>
             </div>
             <div class="kpi-label">Total Sessions</div>
             <div class="kpi-value">{{ number_format($totalSessions) }}</div>
@@ -142,7 +142,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(234,179,8,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#fbbf24;">schedule</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#fbbf24;">schedule</span>
             </div>
             <div class="kpi-label">Upcoming</div>
             <div class="kpi-value">{{ number_format($upcomingSessions) }}</div>
@@ -151,7 +151,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(34,197,94,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#4ade80;">task_alt</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#4ade80;">task_alt</span>
             </div>
             <div class="kpi-label">Completed</div>
             <div class="kpi-value">{{ number_format($completedSessions) }}</div>
@@ -160,7 +160,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(99,102,241,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#818cf8;">verified_user</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#818cf8;">verified_user</span>
             </div>
             <div class="kpi-label">Verified Tutors</div>
             <div class="kpi-value">{{ number_format($totalTutors) }}</div>
@@ -169,7 +169,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(34,197,94,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#4ade80;">person_check</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#4ade80;">person_check</span>
             </div>
             <div class="kpi-label">Available Now</div>
             <div class="kpi-value">{{ number_format($availableTutors) }}</div>
@@ -178,7 +178,7 @@
 
         <div class="kpi-card">
             <div class="kpi-icon" style="background:rgba(99,102,241,0.12);">
-                <span class="material-symbols-outlined" style="font-size:20px;color:#818cf8;">payments</span>
+                <span class="material-symbols-rounded" style="font-size:20px;color:#818cf8;">payments</span>
             </div>
             <div class="kpi-label">Total Revenue</div>
             <div class="kpi-value" style="font-size:1.6rem;">${{ number_format($totalRevenue, 0) }}</div>
@@ -193,7 +193,7 @@
         {{-- Subjects grid --}}
         <div class="panel">
             <div class="panel-header">
-                <span class="material-symbols-outlined" style="font-size:18px;color:#818cf8;">menu_book</span>
+                <span class="material-symbols-rounded" style="font-size:18px;color:#818cf8;">menu_book</span>
                 <span class="panel-title">Subjects</span>
                 <span class="panel-count">{{ $subjects->count() }}</span>
             </div>
@@ -207,7 +207,7 @@
                     </div>
                 </div>
                 @empty
-                <div style="grid-column:span 2;padding:1.5rem;text-align:center;color:#8d90a2;font-size:0.8rem;">
+                <div style="grid-column:span 2;padding:1.5rem;text-align:center;color:#71717a;font-size:0.8rem;">
                     No subjects found.
                 </div>
                 @endforelse
@@ -217,7 +217,7 @@
         {{-- Upcoming sessions list --}}
         <div class="panel">
             <div class="panel-header">
-                <span class="material-symbols-outlined" style="font-size:18px;color:#fbbf24;">upcoming</span>
+                <span class="material-symbols-rounded" style="font-size:18px;color:#fbbf24;">upcoming</span>
                 <span class="panel-title">Upcoming Sessions</span>
                 <span class="panel-count">{{ $upcomingSessionsList->count() }}</span>
             </div>
@@ -227,18 +227,18 @@
                     {{ strtoupper(substr(optional($session->tutorProfile->user)->name ?? '?', 0, 1)) }}
                 </div>
                 <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.8rem;font-weight:600;color:#dae2fd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    <div style="font-size:0.8rem;font-weight:600;color:#f4f4f5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                         {{ optional($session->tutorProfile->user)->name ?? '—' }}
                     </div>
-                    <div style="font-size:0.7rem;color:#8d90a2;">
+                    <div style="font-size:0.7rem;color:#71717a;">
                         {{ optional($session->subject)->name ?? '—' }}
                     </div>
                 </div>
                 <div style="text-align:right;flex-shrink:0;">
-                    <div style="font-size:0.75rem;font-weight:600;color:#b7c8e1;">
+                    <div style="font-size:0.75rem;font-weight:600;color:#a1a1aa;">
                         {{ $session->starts_at->format('M j, g:i A') }}
                     </div>
-                    <div style="font-size:0.68rem;color:#8d90a2;">
+                    <div style="font-size:0.68rem;color:#71717a;">
                         {{ $session->duration_minutes }} min
                     </div>
                 </div>
@@ -248,7 +248,7 @@
                 </div>
             </div>
             @empty
-            <div style="padding:2.5rem;text-align:center;color:#8d90a2;font-size:0.8rem;">
+            <div style="padding:2.5rem;text-align:center;color:#71717a;font-size:0.8rem;">
                 No upcoming sessions scheduled.
             </div>
             @endforelse
@@ -259,7 +259,7 @@
     {{-- Recent Sessions table --}}
     <div class="panel">
         <div class="panel-header">
-            <span class="material-symbols-outlined" style="font-size:18px;color:#818cf8;">history</span>
+            <span class="material-symbols-rounded" style="font-size:18px;color:#818cf8;">history</span>
             <span class="panel-title">Recent Sessions</span>
             <span class="panel-count">{{ $recentSessions->count() }}</span>
         </div>
@@ -287,7 +287,7 @@
                         <td>
                             <div class="tutor-cell">
                                 <div class="avatar-sm">{{ $initial }}</div>
-                                <span style="font-weight:600;color:#dae2fd;">{{ $tutorName }}</span>
+                                <span style="font-weight:600;color:#f4f4f5;">{{ $tutorName }}</span>
                             </div>
                         </td>
                         <td>{{ optional($session->subject)->name ?? '—' }}</td>
@@ -298,7 +298,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" style="text-align:center;padding:2.5rem;color:#8d90a2;">
+                        <td colspan="6" style="text-align:center;padding:2.5rem;color:#71717a;">
                             No sessions recorded yet.
                         </td>
                     </tr>
