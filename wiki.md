@@ -1,6 +1,6 @@
 ---
 title: Dot.Tutor — Platform Wiki
-version: 0.2.0
+version: 0.3.0
 status: draft
 owners: [Tutor Platform Lead]
 platform-id: dot-tutor
@@ -122,6 +122,7 @@ This pass was written and reviewed with **no local PHP, Composer, PostgreSQL, or
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-08-02 | Sakhile Bhayi | **Executed for real** against PHP 8.5 + PostgreSQL — the booking flow from 0.2.0 works as written, confirmed by 6 new Feature tests (`tests/Feature/TutorBookingTest.php`) all passing on first run, plus the full suite (52 tests, 45 passed, 7 skipped by config, 0 failed). Separately, found and fixed a real collision: this platform's six shared Jetstream-core migrations broke when a second platform's migrations ran against the same real `infodot` database — guarded per Dot.Brain ADR-0013, verified by running Dot.Billing → Dot.Forms → Dot.Tutor's migrations back-to-back against one database with zero errors. |
 | 0.2.0 | 2026-08-02 | Tutor Platform Lead | **Built the booking flow flagged as missing in 0.1.0** — `App\Http\Controllers\TutorBookingController` (browse tutors by subject, tutor profile + booking form, session creation, session detail, cancellation), `App\Policies\TutorSessionPolicy` (view/cancel gated to the student or tutor involved, wired in from the start), three new dark-themed views matching the existing dashboard's design language, and the dashboard's dead `href="#"` "Book Session" button and upcoming-session rows now link to real routes. `store()` enforces the tutor-can't-book-self and subject-must-belong-to-tutor constraints and snapshots `hourly_rate` onto the booking's `rate` column. Written and reviewed with no PHP runtime available (§9) — unexecuted. |
 | 0.1.0 | 2026-08-02 | Tutor Platform Lead | Initial platform-owned wiki. Verified `EcosystemAuthController` and `DB_DATABASE=infodot` against the ecosystem SSO contract (no drift). Confirmed `dot.logos10.png` is Dot.Tutor's real logo, not a personal brand mark — wired into favicon/login/nav; removed the stray `index.html`/`styles.css` coming-soon template. Fixed a real cross-user data-disclosure bug: `/dashboard` showed every user's session details to every other logged-in user regardless of involvement, now scoped to the signed-in user's own sessions, with a regression test added (written, unexecuted — see §9). Rewrote `README.md` to drop aspirational AI/video/search/payout claims that don't exist in `composer.json` or `app/`. |
 
