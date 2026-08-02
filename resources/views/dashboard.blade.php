@@ -122,7 +122,7 @@
                 {{ now()->format('l, F j, Y') }}
             </p>
         </div>
-        <a href="#" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.25rem;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:9999px;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(99,102,241,0.3);">
+        <a href="{{ route('tutors.browse') }}" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.25rem;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:9999px;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(99,102,241,0.3);">
             <span class="material-symbols-rounded" style="font-size:18px;">add_circle</span>
             Book Session
         </a>
@@ -222,7 +222,7 @@
                 <span class="panel-count">{{ $upcomingSessionsList->count() }}</span>
             </div>
             @forelse($upcomingSessionsList as $session)
-            <div class="session-row">
+            <a href="{{ route('sessions.show', $session) }}" class="session-row" style="text-decoration:none;color:inherit;">
                 <div class="avatar-sm">
                     {{ strtoupper(substr(optional($session->tutorProfile->user)->name ?? '?', 0, 1)) }}
                 </div>
@@ -246,7 +246,7 @@
                     @php $st = $session->status; @endphp
                     <span class="status-badge badge-{{ $st }}">{{ $st }}</span>
                 </div>
-            </div>
+            </a>
             @empty
             <div style="padding:2.5rem;text-align:center;color:#71717a;font-size:0.8rem;">
                 No upcoming sessions scheduled.

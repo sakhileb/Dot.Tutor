@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\EcosystemAuthController;
+use App\Http\Controllers\TutorBookingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -55,4 +56,11 @@ Route::middleware([
             'subjects', 'upcomingSessionsList', 'recentSessions'
         ));
     })->name('dashboard');
+
+    Route::get('/tutors', [TutorBookingController::class, 'browse'])->name('tutors.browse');
+    Route::get('/tutors/{tutorProfile}', [TutorBookingController::class, 'show'])->name('tutors.show');
+    Route::post('/tutors/{tutorProfile}/sessions', [TutorBookingController::class, 'store'])->name('tutors.sessions.store');
+
+    Route::get('/sessions/{tutorSession}', [TutorBookingController::class, 'showSession'])->name('sessions.show');
+    Route::post('/sessions/{tutorSession}/cancel', [TutorBookingController::class, 'cancel'])->name('sessions.cancel');
 });

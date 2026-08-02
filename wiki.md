@@ -1,6 +1,6 @@
 ---
 title: Dot.Tutor — Platform Wiki
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners: [Tutor Platform Lead]
 platform-id: dot-tutor
@@ -49,22 +49,24 @@ Source: `database/migrations/2026_06_27_000001_create_tutor_tables.php` and `app
 | `LessonResource` | `lesson_resources` | A file attached to a session by either the tutor or the student |
 | `SessionRating` | `session_ratings` | One rating (1–255 tinyint) + optional review per session, unique per session |
 
-`TutorSession::endsAt()` is the only domain business-logic helper (`starts_at->addMinutes(duration_minutes)`). Everything else is plain Eloquent relations — no state-transition guards (e.g. nothing stops a `cancelled` session from being marked `completed`), no validation beyond DB column types, and no booking controller/Livewire component exists yet to create these records through the UI at all.
+`TutorSession::endsAt()` is the only domain business-logic helper (`starts_at->addMinutes(duration_minutes)`). Everything else is plain Eloquent relations — no state-transition guards (e.g. nothing stops a `cancelled` session from being marked `completed`), no validation beyond DB column types. **A booking controller now exists** — see §4.
 
 ## 4. What Exists Today vs. What's Modeled but Unbuilt
 
 **Built:**
 - Ecosystem SSO route (`/auth/ecosystem`) — verified matching the ecosystem-wide contract
-- `/dashboard` route (`routes/web.php`) — platform-wide KPI counts (total/upcoming/completed sessions, approved-tutor count, revenue) plus a subjects grid and two session lists, now scoped to the signed-in user's own sessions (fixed this pass, see §6)
+- `/dashboard` route (`routes/web.php`) — platform-wide KPI counts (total/upcoming/completed sessions, approved-tutor count, revenue) plus a subjects grid and two session lists, scoped to the signed-in user's own sessions (fixed a prior pass, see §6); the dashboard's "Book Session" button and upcoming-session rows now link to real routes instead of `href="#"`
 - Full Jetstream Teams/Fortify scaffold (registration, 2FA, team management, profile) — framework defaults, untouched this pass per instructions
 - Hand-built dark "Dot OS" dashboard layout (`resources/views/layouts/app.blade.php`) — this is the real, functional result of the `feat: InfoDot dark-theme dashboard and layout for Dot.Tutor` commit; it renders correctly against the seeded models and is not a stub
+- **The booking flow, built this pass** (`App\Http\Controllers\TutorBookingController`): browse approved tutors filterable by subject (`GET /tutors`), a tutor's public profile with a booking form (`GET /tutors/{tutorProfile}`), session creation (`POST /tutors/{tutorProfile}/sessions`), a session detail page (`GET /sessions/{tutorSession}`), and cancellation (`POST /sessions/{tutorSession}/cancel`). `store()` enforces real domain constraints — a tutor can't book themselves, the chosen subject must actually be one the tutor's `subjects()` relation includes, the requested time must be in the future — and snapshots `hourly_rate` onto the session's `rate` column at booking time rather than reading it live later. `TutorSessionPolicy` (view/cancel, gated to the student or the tutor involved) ships alongside it, closing the gap §6 flagged.
 
 **Modeled in the schema but not yet built:**
-- Any controller, route, or Livewire component for browsing tutors, booking a session, uploading a `LessonResource`, or leaving a `SessionRating` — the tables and models exist; nothing in `app/Http` or `resources/views` lets a user create these records
+- Uploading a `LessonResource`, or leaving a `SessionRating` — the tables and models exist; nothing in `app/Http` or `resources/views` lets a user create these records yet (booking itself is now built, see above)
+- Tutor/student confirming or completing a session — `status` only ever reaches `pending` (on booking) or `cancelled` (via the new cancel action); nothing transitions a session to `confirmed` or `completed` yet
 - AI session summaries / AI-generated learning paths — no service class, no dependency; only unused `.env.example` keys
 - Video calling / shared whiteboard ("virtual classroom") — not modeled in the schema at all, not built
 - Tutor earnings & payout tracking — the dashboard shows an aggregate `$totalRevenue` figure; there is no per-tutor earnings view, ledger, or payout table
-- Any Policy class for the tutoring domain (`TutorProfilePolicy`, `TutorSessionPolicy`, etc.) — only the stock `TeamPolicy` exists
+- `TutorProfilePolicy` (e.g. gating profile edits to the owning user) — only `TutorSessionPolicy` exists so far, scoped to what the new booking flow actually needed
 
 ## 5. Events Emitted
 
@@ -76,7 +78,7 @@ Source: `database/migrations/2026_06_27_000001_create_tutor_tables.php` and `app
 
 Fix applied in `routes/web.php`: both list queries are now scoped with a `student_id = auth()->id() OR tutorProfile.user_id = auth()->id()` clause, so a user only sees sessions they are actually part of. The KPI counts above them (`totalSessions`, `upcomingSessions`, etc.) remain platform-wide aggregates — no PII in a count, consistent with how Dot.Billing's dashboard aggregates are treated. A regression test (`tests/Feature/DashboardSessionScopingTest.php`) asserts another user's session details do not leak and that a user's own session still renders — written to this repo's testing standard but **not executed**, per this environment's constraints (§9).
 
-**Not fixed, flagged for a dedicated pass:** there is no booking UI/controller yet, so no by-ID `show`/`edit` route for `TutorProfile`, `TutorSession`, or `LessonResource` currently exists to audit for IDOR. When that UI is built, it needs Policy classes (`TutorSessionPolicy::view` gated to the student or tutor involved; `TutorProfilePolicy::update` gated to the owning user) from the start — there is no existing convention to extend yet beyond `TeamPolicy`, so this is a "build it correctly," not "fix a gap," item.
+**Booking UI built this pass (§4), with authorization designed in from the start, not retrofitted:** `TutorBookingController::showSession()` and `::cancel()` both call `Gate::authorize()` against the new `TutorSessionPolicy` before touching a `TutorSession` by ID — a user can only view or cancel a session they're the student or tutor on. `store()` additionally checks the booking-time constraints in §4 (can't book yourself, subject must belong to the tutor). `TutorProfile::show()` only exposes `approved` profiles (`abort_unless`), so a `pending`/`suspended` profile isn't browsable by ID either. No `LessonResource`/`SessionRating` routes exist yet, so those remain unaudited until built (§10).
 
 ## 7. Branding
 
@@ -89,7 +91,7 @@ This repo ships with two unrelated image assets at its root: `dot.logos10.png` a
 
 Dot.Tutor is registered in Dot.Brain's platform map (icon `school`, education domain). Dot.Brain's ingested view is maintained at [`platforms/dot-tutor.md`](https://github.com/sakhilebhayi/Dot.Brain/blob/main/platforms/dot-tutor.md); that document may describe more target-state capability (AI summaries, learning paths, a full booking flow) than this repo currently implements — the gap is intentional and tracked in §4 and §9, not a discrepancy to silently paper over.
 
-Once domain events exist (§5) and a real booking flow is built (§4), Dot.Tutor would publish Knowledge Packs following the same shape as other platforms:
+Once domain events exist (§5), Dot.Tutor would publish Knowledge Packs following the same shape as other platforms:
 
 | Payload type | Would contain |
 |---|---|
@@ -107,8 +109,9 @@ This pass was written and reviewed with **no local PHP, Composer, PostgreSQL, or
 ## 10. Roadmap / Open Questions
 
 - [ ] **Missing dedicated ecosystem logo asset resolved this pass** — `dot.logos10.png` was confirmed as Dot.Tutor's real logo (§7) and wired into favicon/nav/login; no outstanding gap here, listed for provenance since the task going in assumed the opposite
-- [ ] Build the actual booking flow — controllers/Livewire for browsing tutors, booking a session, uploading `LessonResource`s, leaving a `SessionRating` — currently only the schema and dashboard exist
-- [ ] Write `TutorSessionPolicy` / `TutorProfilePolicy` *before* any by-ID show/edit route ships, not after
+- [x] ~~Build the actual booking flow~~ — done this pass (§4): browse/show/store/cancel routes, `TutorBookingController`, `TutorSessionPolicy`
+- [ ] Uploading `LessonResource`s, leaving a `SessionRating`, and a real `pending → confirmed → completed` status transition (tutor confirms, someone marks complete) — still just schema, no UI
+- [ ] Write `TutorProfilePolicy` when profile editing is built
 - [ ] Decide whether the tutoring domain should gain a `team_id` (org-scoped tutoring, e.g. a school licensing Dot.Tutor for its students) or stay a single shared marketplace — current schema assumes the latter with no way to express the former
 - [ ] Remove or genuinely implement the AI config (`ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL` in `.env.example`) — currently dead, unlike Dot.Billing's real (if fallback-heavy) `AiBillingService`
 - [ ] Fix `composer.json` — still names the package `laravel/laravel` with the stock skeleton description, not `sakhileb/dot-tutor`-style ecosystem naming
@@ -119,6 +122,7 @@ This pass was written and reviewed with **no local PHP, Composer, PostgreSQL, or
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-08-02 | Tutor Platform Lead | **Built the booking flow flagged as missing in 0.1.0** — `App\Http\Controllers\TutorBookingController` (browse tutors by subject, tutor profile + booking form, session creation, session detail, cancellation), `App\Policies\TutorSessionPolicy` (view/cancel gated to the student or tutor involved, wired in from the start), three new dark-themed views matching the existing dashboard's design language, and the dashboard's dead `href="#"` "Book Session" button and upcoming-session rows now link to real routes. `store()` enforces the tutor-can't-book-self and subject-must-belong-to-tutor constraints and snapshots `hourly_rate` onto the booking's `rate` column. Written and reviewed with no PHP runtime available (§9) — unexecuted. |
 | 0.1.0 | 2026-08-02 | Tutor Platform Lead | Initial platform-owned wiki. Verified `EcosystemAuthController` and `DB_DATABASE=infodot` against the ecosystem SSO contract (no drift). Confirmed `dot.logos10.png` is Dot.Tutor's real logo, not a personal brand mark — wired into favicon/login/nav; removed the stray `index.html`/`styles.css` coming-soon template. Fixed a real cross-user data-disclosure bug: `/dashboard` showed every user's session details to every other logged-in user regardless of involvement, now scoped to the signed-in user's own sessions, with a regression test added (written, unexecuted — see §9). Rewrote `README.md` to drop aspirational AI/video/search/payout claims that don't exist in `composer.json` or `app/`. |
 
 ## Open Questions
