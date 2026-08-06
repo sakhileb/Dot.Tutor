@@ -1,3 +1,3 @@
-<a href="/">
-    <img class="w-24 h-auto" src="{{ asset('images/logo.png') }}" alt="Dot.Tutor">
+<a href="/" class="flex items-center gap-2.5">
+    <img src="{{ asset('images/logo.png') }}" alt="Dot.Tutor" class="h-16 sm:h-20 w-auto">
 </a>
