@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 class TutorSession extends Model
 {
@@ -18,7 +19,7 @@ class TutorSession extends Model
 
     protected $casts = [
         'starts_at' => 'datetime',
-        'rate'      => 'decimal:2',
+        'rate' => 'decimal:2',
     ];
 
     public function tutorProfile(): BelongsTo
@@ -46,7 +47,7 @@ class TutorSession extends Model
         return $this->hasOne(SessionRating::class, 'session_id');
     }
 
-    public function endsAt(): \Illuminate\Support\Carbon
+    public function endsAt(): Carbon
     {
         return $this->starts_at->addMinutes($this->duration_minutes);
     }

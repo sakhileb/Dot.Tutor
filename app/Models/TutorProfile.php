@@ -13,7 +13,7 @@ class TutorProfile extends Model
 
     protected $casts = [
         'hourly_rate' => 'decimal:2',
-        'rating'      => 'decimal:2',
+        'rating' => 'decimal:2',
     ];
 
     public function user(): BelongsTo
