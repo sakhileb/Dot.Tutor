@@ -294,7 +294,11 @@
         <footer class="py-14 px-5 sm:px-8 border-t border-[var(--line-ink)] bg-[#1e2a1b]">
             <div class="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
                 <a href="/" class="flex items-center gap-2.5">
-                    <img src="{{ asset('images/logo.png') }}" alt="Dot.Tutor" class="h-11 w-auto opacity-90">
+                    {{-- This footer band is a dark --ink bg on an otherwise
+                         light-themed page, so it needs the dark-safe logo
+                         variant even though the header above (on the page's
+                         light body) correctly uses the default logo. --}}
+                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Tutor" class="h-11 w-auto opacity-90">
                 </a>
                 <div class="flex items-center gap-6 font-mono text-xs tracking-wide uppercase text-[var(--sage)]">
                     <a href="{{ route('policy.show') }}" class="hover:text-[var(--chalk)] transition-colors">Privacy</a>
