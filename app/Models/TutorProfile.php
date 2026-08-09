@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TutorProfile extends Model
 {
-    protected $fillable = ['user_id', 'bio', 'hourly_rate', 'rating', 'total_sessions', 'status'];
+    protected $fillable = [
+        'user_id', 'bio', 'hourly_rate', 'rating', 'total_sessions', 'status',
+        'reviewed_by', 'reviewed_at', 'rejected_reason',
+    ];
 
     protected $casts = [
         'hourly_rate' => 'decimal:2',

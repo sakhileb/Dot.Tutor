@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EcosystemAuthController;
 use App\Http\Controllers\TutorBookingController;
+use App\Http\Controllers\TutorProfileReviewController;
 use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\TutorSession;
@@ -77,4 +78,10 @@ Route::middleware([
 
     Route::get('/sessions/{tutorSession}', [TutorBookingController::class, 'showSession'])->name('sessions.show');
     Route::post('/sessions/{tutorSession}/cancel', [TutorBookingController::class, 'cancel'])->name('sessions.cancel');
+
+    Route::middleware('operator')->prefix('operator')->name('operator.')->group(function () {
+        Route::get('/tutor-profiles', [TutorProfileReviewController::class, 'index'])->name('tutor-profiles.index');
+        Route::post('/tutor-profiles/{tutorProfile}/approve', [TutorProfileReviewController::class, 'approve'])->name('tutor-profiles.approve');
+        Route::post('/tutor-profiles/{tutorProfile}/reject', [TutorProfileReviewController::class, 'reject'])->name('tutor-profiles.reject');
+    });
 });
