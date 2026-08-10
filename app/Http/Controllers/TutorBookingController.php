@@ -47,8 +47,16 @@ class TutorBookingController extends Controller
 
         $tutorProfile->load(['user', 'subjects']);
 
+        $reviews = $tutorProfile->ratings()
+            ->whereNotNull('review')
+            ->with('rater')
+            ->latest()
+            ->limit(20)
+            ->get();
+
         return view('tutors.show', [
             'tutorProfile' => $tutorProfile,
+            'reviews' => $reviews,
         ]);
     }
 
@@ -98,7 +106,7 @@ class TutorBookingController extends Controller
     {
         Gate::authorize('view', $tutorSession);
 
-        $tutorSession->load(['tutorProfile.user', 'subject', 'student']);
+        $tutorSession->load(['tutorProfile.user', 'subject', 'student', 'rating']);
 
         return view('sessions.show', [
             'session' => $tutorSession,
@@ -114,5 +122,36 @@ class TutorBookingController extends Controller
         return redirect()
             ->route('sessions.show', $tutorSession)
             ->with('status', 'Session cancelled.');
+    }
+
+    /**
+     * The tutor accepts a pending booking request.
+     */
+    public function confirm(TutorSession $tutorSession): RedirectResponse
+    {
+        Gate::authorize('confirm', $tutorSession);
+
+        $tutorSession->update(['status' => 'confirmed']);
+
+        return redirect()
+            ->route('sessions.show', $tutorSession)
+            ->with('status', 'Session confirmed.');
+    }
+
+    /**
+     * Either party marks a confirmed session as having happened. This is
+     * what makes leaving a rating/review possible — see SessionRatingController.
+     */
+    public function complete(TutorSession $tutorSession): RedirectResponse
+    {
+        Gate::authorize('complete', $tutorSession);
+
+        $tutorSession->update(['status' => 'completed']);
+
+        $tutorSession->tutorProfile->increment('total_sessions');
+
+        return redirect()
+            ->route('sessions.show', $tutorSession)
+            ->with('status', 'Session marked complete.');
     }
 }

@@ -128,6 +128,23 @@
 
     </div>
 
+    @if($reviews->isNotEmpty())
+    <div class="panel" style="margin-top:1.25rem;">
+        <div style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#f4f4f5;margin-bottom:1rem;">
+            Reviews
+        </div>
+        @foreach($reviews as $review)
+        <div style="padding:0.85rem 0;border-bottom:1px solid rgba(67,70,86,0.15);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem;">
+                <span style="font-size:0.82rem;font-weight:700;color:#f4f4f5;">{{ optional($review->rater)->name ?? 'A student' }}</span>
+                <span style="color:#fbbf24;font-size:0.8rem;">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+            </div>
+            <p style="font-size:0.82rem;color:#a1a1aa;">{{ $review->review }}</p>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
 </div>
 
 </x-app-layout>

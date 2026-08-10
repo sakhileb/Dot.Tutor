@@ -17,6 +17,17 @@
     .badge-confirmed  { background: rgba(34,197,94,0.12);  color: #4ade80; }
     .badge-completed  { background: rgba(99,102,241,0.15); color: #a5b4fc; }
     .badge-cancelled  { background: rgba(239,68,68,0.12);  color: #f87171; }
+    .badge-no_show    { background: rgba(161,161,170,0.15); color: #a1a1aa; }
+    .confirm-btn {
+        margin-top: 1.25rem; margin-right: 0.6rem; padding: 0.6rem 1.1rem; border-radius: 9999px;
+        background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25);
+        font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    }
+    .complete-btn {
+        margin-top: 1.25rem; margin-right: 0.6rem; padding: 0.6rem 1.1rem; border-radius: 9999px;
+        background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3);
+        font-size: 0.78rem; font-weight: 700; cursor: pointer;
+    }
     .detail-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(67,70,86,0.15); font-size: 0.82rem; }
     .detail-row:last-child { border-bottom: none; }
     .detail-label { color: #71717a; }
@@ -26,6 +37,11 @@
         background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25);
         font-size: 0.78rem; font-weight: 700; cursor: pointer;
     }
+    .field-input {
+        width: 100%; background: #0f0f11; border: 1px solid rgba(67,70,86,0.4);
+        border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.85rem; color: #f4f4f5;
+    }
+    .error-text { color: #f87171; font-size: 0.72rem; margin-top: 0.3rem; }
 </style>
 
 <div style="padding: 2rem 2.5rem;">
@@ -80,12 +96,63 @@
         </div>
         @endif
 
+        <div style="display:flex;flex-wrap:wrap;">
+        @can('confirm', $session)
+        <form method="POST" action="{{ route('sessions.confirm', $session) }}">
+            @csrf
+            <button type="submit" class="confirm-btn">Confirm session</button>
+        </form>
+        @endcan
+
+        @can('complete', $session)
+        <form method="POST" action="{{ route('sessions.complete', $session) }}">
+            @csrf
+            <button type="submit" class="complete-btn">Mark completed</button>
+        </form>
+        @endcan
+
         @if(in_array($session->status, ['pending', 'confirmed']))
         <form method="POST" action="{{ route('sessions.cancel', $session) }}" onsubmit="return confirm('Cancel this session?');">
             @csrf
             <button type="submit" class="cancel-btn">Cancel session</button>
         </form>
         @endif
+        </div>
+
+        @if($session->rating)
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(67,70,86,0.15);">
+            <div class="detail-label" style="margin-bottom:0.4rem;">Your review</div>
+            <div style="color:#fbbf24;font-size:0.9rem;margin-bottom:0.3rem;">
+                {{ str_repeat('★', $session->rating->rating) }}{{ str_repeat('☆', 5 - $session->rating->rating) }}
+            </div>
+            @if($session->rating->review)
+            <p style="font-size:0.82rem;color:#a1a1aa;">{{ $session->rating->review }}</p>
+            @endif
+        </div>
+        @endif
+
+        @can('rate', $session)
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(67,70,86,0.15);">
+            <div class="detail-label" style="margin-bottom:0.6rem;">Rate this session</div>
+            <form method="POST" action="{{ route('sessions.rating.store', $session) }}">
+                @csrf
+                <div style="margin-bottom:0.75rem;">
+                    <select name="rating" class="field-input" style="width:auto;">
+                        <option value="">Select a rating…</option>
+                        @for($i = 5; $i >= 1; $i--)
+                            <option value="{{ $i }}" @selected(old('rating') == $i)>{{ $i }} star{{ $i > 1 ? 's' : '' }}</option>
+                        @endfor
+                    </select>
+                    @error('rating')<div class="error-text">{{ $message }}</div>@enderror
+                </div>
+                <div style="margin-bottom:0.75rem;">
+                    <textarea name="review" rows="3" placeholder="Optional review…" class="field-input">{{ old('review') }}</textarea>
+                    @error('review')<div class="error-text">{{ $message }}</div>@enderror
+                </div>
+                <button type="submit" class="confirm-btn">Submit review</button>
+            </form>
+        </div>
+        @endcan
     </div>
 
 </div>

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class TutorProfile extends Model
 {
@@ -32,5 +33,16 @@ class TutorProfile extends Model
     public function sessions(): HasMany
     {
         return $this->hasMany(TutorSession::class);
+    }
+
+    public function ratings(): HasManyThrough
+    {
+        return $this->hasManyThrough(SessionRating::class, TutorSession::class, 'tutor_profile_id', 'session_id');
+    }
+
+    /** Recompute the average rating from every review this tutor has received. */
+    public function refreshRating(): void
+    {
+        $this->update(['rating' => $this->ratings()->avg('rating') ?? 0]);
     }
 }

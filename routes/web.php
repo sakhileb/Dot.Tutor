@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\EcosystemAuthController;
+use App\Http\Controllers\SessionRatingController;
 use App\Http\Controllers\TutorBookingController;
 use App\Http\Controllers\TutorProfileReviewController;
 use App\Models\Subject;
@@ -78,6 +79,9 @@ Route::middleware([
 
     Route::get('/sessions/{tutorSession}', [TutorBookingController::class, 'showSession'])->name('sessions.show');
     Route::post('/sessions/{tutorSession}/cancel', [TutorBookingController::class, 'cancel'])->name('sessions.cancel');
+    Route::post('/sessions/{tutorSession}/confirm', [TutorBookingController::class, 'confirm'])->name('sessions.confirm');
+    Route::post('/sessions/{tutorSession}/complete', [TutorBookingController::class, 'complete'])->name('sessions.complete');
+    Route::post('/sessions/{tutorSession}/rating', [SessionRatingController::class, 'store'])->name('sessions.rating.store');
 
     Route::middleware('operator')->prefix('operator')->name('operator.')->group(function () {
         Route::get('/tutor-profiles', [TutorProfileReviewController::class, 'index'])->name('tutor-profiles.index');

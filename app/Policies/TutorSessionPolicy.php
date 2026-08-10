@@ -24,4 +24,40 @@ class TutorSessionPolicy
         return $this->view($user, $session)
             && in_array($session->status, ['pending', 'confirmed'], true);
     }
+
+    /**
+     * Only the tutor confirms a booking -- the student already committed to
+     * it by requesting the session; confirmation is the tutor accepting.
+     */
+    public function confirm(User $user, TutorSession $session): bool
+    {
+        return $session->tutorProfile->user_id === $user->id
+            && $session->status === 'pending';
+    }
+
+    /**
+     * Either party can mark a confirmed session completed, but only once
+     * it has actually started -- prevents completing a session that
+     * hasn't happened yet.
+     */
+    public function complete(User $user, TutorSession $session): bool
+    {
+        return $this->view($user, $session)
+            && $session->status === 'confirmed'
+            && now()->gte($session->starts_at);
+    }
+
+    /**
+     * Only the student rates a session, not the tutor -- `session_ratings`
+     * has a unique constraint on session_id (one rating per session, not
+     * one per party), and the average feeds TutorProfile.rating, so it
+     * only makes sense as "students rate the tutor they booked", matching
+     * how every real tutoring marketplace (Wyzant, Preply) works.
+     */
+    public function rate(User $user, TutorSession $session): bool
+    {
+        return $session->student_id === $user->id
+            && $session->status === 'completed'
+            && ! $session->rating()->exists();
+    }
 }
