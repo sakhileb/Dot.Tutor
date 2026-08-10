@@ -60,4 +60,15 @@ class TutorSessionPolicy
             && $session->status === 'completed'
             && ! $session->rating()->exists();
     }
+
+    /**
+     * Either party can attach a lesson resource once the session is
+     * actually happening or has happened -- not while it's still a
+     * speculative pending request, and not on a cancelled/no-show one.
+     */
+    public function uploadResource(User $user, TutorSession $session): bool
+    {
+        return $this->view($user, $session)
+            && in_array($session->status, ['confirmed', 'completed'], true);
+    }
 }

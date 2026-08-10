@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\EcosystemAuthController;
+use App\Http\Controllers\LessonResourceController;
 use App\Http\Controllers\SessionRatingController;
 use App\Http\Controllers\TutorBookingController;
 use App\Http\Controllers\TutorProfileReviewController;
@@ -82,6 +83,10 @@ Route::middleware([
     Route::post('/sessions/{tutorSession}/confirm', [TutorBookingController::class, 'confirm'])->name('sessions.confirm');
     Route::post('/sessions/{tutorSession}/complete', [TutorBookingController::class, 'complete'])->name('sessions.complete');
     Route::post('/sessions/{tutorSession}/rating', [SessionRatingController::class, 'store'])->name('sessions.rating.store');
+
+    Route::post('/sessions/{tutorSession}/resources', [LessonResourceController::class, 'store'])->name('resources.store');
+    Route::get('/resources/{lessonResource}/download', [LessonResourceController::class, 'download'])->name('resources.download');
+    Route::delete('/resources/{lessonResource}', [LessonResourceController::class, 'destroy'])->name('resources.destroy');
 
     Route::middleware('operator')->prefix('operator')->name('operator.')->group(function () {
         Route::get('/tutor-profiles', [TutorProfileReviewController::class, 'index'])->name('tutor-profiles.index');

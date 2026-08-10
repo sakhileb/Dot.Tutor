@@ -60,6 +60,19 @@ return [
             'report' => false,
         ],
 
+        // Session-scoped lesson materials -- never public. Streamed through
+        // LessonResourceController::download() so LessonResourcePolicy runs
+        // on every access, matching the private-disk-plus-Gate pattern used
+        // for contracts/signatures on other Dot platforms.
+        'lesson-resources' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/lesson-resources'),
+            'serve' => false,
+            'throw' => true,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
     ],
 
     /*

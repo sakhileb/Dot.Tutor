@@ -42,6 +42,11 @@
         border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.85rem; color: #f4f4f5;
     }
     .error-text { color: #f87171; font-size: 0.72rem; margin-top: 0.3rem; }
+    .resource-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.6rem 0; border-bottom: 1px solid rgba(67,70,86,0.15); font-size: 0.82rem;
+    }
+    .resource-row:last-child { border-bottom: none; }
 </style>
 
 <div style="padding: 2rem 2.5rem;">
@@ -153,6 +158,49 @@
             </form>
         </div>
         @endcan
+
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(67,70,86,0.15);">
+            <div class="detail-label" style="margin-bottom:0.6rem;">Lesson resources</div>
+
+            @forelse($session->resources as $resource)
+            <div class="resource-row">
+                <div>
+                    <div style="color:#f4f4f5;font-weight:600;">{{ $resource->title }}</div>
+                    <div style="color:#71717a;font-size:0.72rem;">
+                        Uploaded by {{ optional($resource->uploader)->name ?? 'someone' }}
+                        &middot; {{ $resource->created_at->format('M j, Y') }}
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+                    <a href="{{ route('resources.download', $resource) }}" style="color:#a5b4fc;text-decoration:none;font-size:0.78rem;font-weight:700;">Download</a>
+                    @if($resource->uploader_id === auth()->id())
+                    <form method="POST" action="{{ route('resources.destroy', $resource) }}" onsubmit="return confirm('Remove this resource?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="background:none;border:none;color:#f87171;font-size:0.78rem;font-weight:700;cursor:pointer;padding:0;">Remove</button>
+                    </form>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <p style="font-size:0.8rem;color:#71717a;">No resources shared yet.</p>
+            @endforelse
+
+            @can('uploadResource', $session)
+            <form method="POST" action="{{ route('resources.store', $session) }}" enctype="multipart/form-data" style="margin-top:1rem;">
+                @csrf
+                <div style="margin-bottom:0.75rem;">
+                    <input type="text" name="title" placeholder="Title (e.g. Practice worksheet)" class="field-input" value="{{ old('title') }}">
+                    @error('title')<div class="error-text">{{ $message }}</div>@enderror
+                </div>
+                <div style="margin-bottom:0.75rem;">
+                    <input type="file" name="file" class="field-input">
+                    @error('file')<div class="error-text">{{ $message }}</div>@enderror
+                </div>
+                <button type="submit" class="complete-btn">Upload resource</button>
+            </form>
+            @endcan
+        </div>
     </div>
 
 </div>

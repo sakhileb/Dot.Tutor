@@ -106,7 +106,7 @@ class TutorBookingController extends Controller
     {
         Gate::authorize('view', $tutorSession);
 
-        $tutorSession->load(['tutorProfile.user', 'subject', 'student', 'rating']);
+        $tutorSession->load(['tutorProfile.user', 'subject', 'student', 'rating', 'resources.uploader']);
 
         return view('sessions.show', [
             'session' => $tutorSession,
