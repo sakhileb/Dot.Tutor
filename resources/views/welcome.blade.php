@@ -82,7 +82,11 @@
         >
             <nav class="max-w-[1400px] mx-auto px-5 sm:px-8 py-3 flex items-center justify-between">
                 <a href="/" class="flex items-center gap-2.5 press">
-                    <img src="{{ asset('images/logo.png') }}" alt="Dot.Tutor" class="h-16 sm:h-20 w-auto">
+                    {{-- The header is fixed and transparent until scrolled, so it always
+                         sits on top of the dark hero section (bg-[#1e2a1b]) below it —
+                         even the scrolled state's own fill is the same dark color — so
+                         the dark-safe logo variant is needed here, not the default. --}}
+                    <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Tutor" class="h-16 sm:h-20 w-auto">
                 </a>
 
                 <div class="hidden md:flex items-center gap-8 font-mono text-[13px] tracking-wide uppercase text-[var(--sage)]">
@@ -296,8 +300,8 @@
                 <a href="/" class="flex items-center gap-2.5">
                     {{-- This footer band is a dark --ink bg on an otherwise
                          light-themed page, so it needs the dark-safe logo
-                         variant even though the header above (on the page's
-                         light body) correctly uses the default logo. --}}
+                         variant — same as the header above, which also sits
+                         on a dark background. --}}
                     <img src="{{ asset('images/logo-light.png') }}" alt="Dot.Tutor" class="h-11 w-auto opacity-90">
                 </a>
                 <div class="flex items-center gap-6 font-mono text-xs tracking-wide uppercase text-[var(--sage)]">
